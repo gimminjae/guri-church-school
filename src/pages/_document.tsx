@@ -4,7 +4,7 @@ import React from "react"
 class MyDocument extends Document {
   render() {
     return (
-      <Html>
+      <Html data-theme="light">
         <Head>
           <title>The Note</title>
           <link rel="icon" href="/favicon.ico" />

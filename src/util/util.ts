@@ -58,6 +58,9 @@ const util = {
     const tokens = uuid.split("-")
     return tokens[2] + tokens[1] + tokens[0] + tokens[3] + tokens[4]
   },
+  getNameByEmail: (email?: string) => {
+    return email ? email.split("@")[0] : ""
+  },
 }
 
 export default util
