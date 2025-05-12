@@ -6,7 +6,7 @@ function Layout({ children }: React.PropsWithChildren<{}>) {
   return (
     <>
       <Header />
-      <div className="flex flex-col items-center animate-fade-up pt-20">
+      <div className="pt-20">
         {children}
       </div>
     </>

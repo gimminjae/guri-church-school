@@ -40,13 +40,10 @@ function HeaderNavbar() {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a>Homepage</a>
+              <a>기도부탁 목록</a>
             </li>
             <li>
-              <a>Portfolio</a>
-            </li>
-            <li>
-              <a>About</a>
+              <a>전도현황</a>
             </li>
           </ul>
         </div>
@@ -55,66 +52,40 @@ function HeaderNavbar() {
         <a className="btn btn-ghost text-xl">구리교회 중고등부</a>
       </div>
       <div className="navbar-end">
-        <button className="btn btn-ghost btn-circle" onClick={() => move("/")}>
-          <div className="indicator">
-            <RxAvatar className="text-3xl" />
+        {user ? (
+          <div className="dropdown dropdown-end">
+            <div tabIndex={1} role="button" className="btn btn-ghost btn-circle">
+              <div className="indicator">
+                <RxAvatar className="text-3xl" />
+              </div>
+            </div>
+            <ul
+              tabIndex={1}
+              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+            >
+              <li>
+                <a onClick={move(`/`)}>
+                  <MdSpaceDashboard className="mr-2" />
+                  마이페이지
+                </a>
+              </li>
+              <li>
+                <a onClick={logout}>
+                  <FaArrowRightFromBracket className="mr-2" />
+                  로그아웃
+                </a>
+              </li>
+            </ul>
           </div>
-        </button>
+        ) : (
+          <></>
+          // <button className="btn btn-ghost" onClick={loginWithGoogle}>
+          //   <FaGoogle className="mr-2" />
+          //   로그인
+          // </button>
+        )}
       </div>
     </div>
-    // <Navbar fluid rounded>
-    //   <Link
-    //     href="/"
-    //     className="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
-    //   >
-    //     The Note
-    //   </Link>
-    //   <div className="flex md:order-2">
-    //     {(user && (
-    //       <Dropdown
-    //         arrowIcon={false}
-    //         inline
-    //         label={
-    //           <h1 className="text-4xl">
-    //             <RxAvatar />
-    //           </h1>
-    //         }
-    //       >
-    //         <Dropdown.Header>
-    //           <span className="block truncate text-sm font-medium">
-    //             {user?.email}
-    //           </span>
-    //         </Dropdown.Header>
-    //         <Dropdown.Item onClick={move(`/member/${user?.email}`)}>
-    //           <MdSpaceDashboard className="mr-2 h-3 w-3" />
-    //           Dashboard
-    //         </Dropdown.Item>
-    //         <Dropdown.Item onClick={move("/setting")}>
-    //           <IoMdSettings className="mr-2 h-3 w-3" />
-    //           Settings
-    //         </Dropdown.Item>
-    //         <Dropdown.Divider />
-    //         <Dropdown.Item onClick={logout}>
-    //           <FaArrowRightFromBracket className="mr-2 h-3 w-3" />
-    //           Log out
-    //         </Dropdown.Item>
-    //       </Dropdown>
-    //     )) || (
-    //       <Button onClick={loginWithGoogle}>
-    //         <FaGoogle className="mr-2 h-5 w-5" />
-    //         Login
-    //       </Button>
-    //     )}
-    //     <Navbar.Toggle />
-    //   </div>
-    //   <Navbar.Collapse>
-    //     <Navbar.Link href="/" active>
-    //       Home
-    //     </Navbar.Link>
-    //     <Navbar.Link href="#">About</Navbar.Link>
-    //     {user && <Navbar.Link href="/post/write">Write</Navbar.Link>}
-    //   </Navbar.Collapse>
-    // </Navbar>
   )
 }
 export default memo(HeaderNavbar)

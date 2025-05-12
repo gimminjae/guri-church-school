@@ -14,6 +14,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   User,
+  updateProfile,
+  updatePassword,
 } from "firebase/auth"
 
 // 컨텍스트 타입 정의
@@ -23,15 +25,17 @@ interface AuthContextType {
   register: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   loginWithGoogle: () => Promise<void>
+  setDisplayName: (displayName: string) => Promise<void>
 }
 
 // AuthContext 컨텍스트 생성
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  login: async () => {},
-  register: async () => {},
-  logout: async () => {},
-  loginWithGoogle: async () => {},
+  login: async () => { },
+  register: async () => { },
+  logout: async () => { },
+  loginWithGoogle: async () => { },
+  setDisplayName: async () => { },
 })
 
 // AuthProvider 컴포넌트 정의
@@ -69,9 +73,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
+  const setDisplayName = async (displayName: string) => {
+    if (auth.currentUser) {
+      await updateProfile(auth.currentUser, { displayName })
+    }
+  }
+
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, loginWithGoogle }}
+      value={{ user, login, register, logout, loginWithGoogle, setDisplayName }}
     >
       {children}
     </AuthContext.Provider>

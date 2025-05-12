@@ -1,7 +1,9 @@
 @import "tailwindcss";
+
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark;
 }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -24,8 +26,16 @@ body {
   color: black;
   padding: 1rem;
 }
+
 .w-md-editor-text-input:focus {
   outline: none !important;
   border: none !important;
   box-shadow: none !important;
+}
+
+html,
+body,
+#__next {
+  width: 100%;
+  overflow-x: hidden;
 }

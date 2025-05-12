@@ -48,7 +48,10 @@ export const todoPrayModel = {
       // 확답여부
       isConfirmed: todoPray.isConfirmed,
     }
+    console.log('savedTodoPray', savedTodoPray)
     set(ref(db, `todoPrays/${id}`), savedTodoPray)
+      .then((result) => console.log(result))
+      .catch((result) => console.log(result))
 
     return savedTodoPray
   },
