@@ -5,6 +5,7 @@ import util from "@/util/util"
 import { todoPrayModel } from "@/firebase/todopray"
 import { useCustomQuery } from "@/hooks/useCustomQuery"
 import { CiEdit, CiTrash } from "react-icons/ci";
+import { toast } from "react-toastify"
 
 
 const initialTodoPray: TodoPray = {
@@ -57,6 +58,7 @@ export default function Home() {
     }
     refetch()
     setTodoPray(initialTodoPray)
+    toast.success('저장되었습니다.')
   }, [todoPray, user])
 
   const handleTodoPrayChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -73,6 +75,7 @@ export default function Home() {
     if (id && window.confirm('정말 삭제하시겠습니까?')) {
       await todoPrayModel.deleteTodoPrayById(id)
       refetch()
+      toast.success('삭제되었습니다.')
     }
   }, [])
 
