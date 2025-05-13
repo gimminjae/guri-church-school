@@ -40,10 +40,10 @@ function HeaderNavbar() {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <button onClick={move(`/todoprays`)}>기도부탁 목록</button>
+              <button tabIndex={0} onClick={move(`/todoprays`)} role="button">기도부탁 목록</button>
             </li>
             <li>
-              <a>전도현황</a>
+              <a tabIndex={0} onClick={move(`/status`)} role="button">전도현황</a>
             </li>
           </ul>
         </div>
