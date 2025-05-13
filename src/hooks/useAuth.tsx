@@ -17,6 +17,7 @@ import {
   updateProfile,
   updatePassword,
 } from "firebase/auth"
+import { userDataModel } from "@/firebase/userdata"
 
 // 컨텍스트 타입 정의
 interface AuthContextType {
@@ -26,6 +27,7 @@ interface AuthContextType {
   logout: () => Promise<void>
   loginWithGoogle: () => Promise<void>
   setDisplayName: (displayName: string) => Promise<void>
+  metadata: UserData | null
 }
 
 // AuthContext 컨텍스트 생성
@@ -36,11 +38,23 @@ const AuthContext = createContext<AuthContextType>({
   logout: async () => { },
   loginWithGoogle: async () => { },
   setDisplayName: async () => { },
+  metadata: null,
 })
 
 // AuthProvider 컴포넌트 정의
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
+  const [metadata, setMetadata] = useState<UserData | null>(null)
+
+  useEffect(() => {
+    if (user?.uid) {
+      const getMetadata = async () => {
+        const userData = await userDataModel.getUserDataById(user.uid)
+        setMetadata(userData)
+      }
+      getMetadata()
+    }
+  }, [user?.uid])
 
   // 사용자 상태 업데이트
   useEffect(() => {
@@ -81,7 +95,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, loginWithGoogle, setDisplayName }}
+      value={{ user, login, register, logout, loginWithGoogle, setDisplayName, metadata }}
     >
       {children}
     </AuthContext.Provider>

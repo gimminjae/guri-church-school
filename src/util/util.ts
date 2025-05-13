@@ -61,6 +61,10 @@ const util = {
   getNameByEmail: (email?: string) => {
     return email ? email.split("@")[0] : ""
   },
+  getGenderByCode: (code?: string) => {
+    if (!code) return ""
+    return code === "M" ? "형제" : "자매"
+  }
 }
 
 export default util
