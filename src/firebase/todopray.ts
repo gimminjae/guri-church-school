@@ -12,13 +12,14 @@ import {
   equalTo,
 } from "firebase/database"
 import { loadingActions, store } from "@/store//LoadingState"
-
+import { userDataModel } from "./userdata"
 export const todoPrayModel = {
   async writeTodoPray(todoPray: TodoPray) {
     const id = util.getUuid()
     const now = new Date()
     const nowStr = util.getFormattedDateTime(now)
     const nowStamp = util.getDateTimeStamp(now)
+
     const savedTodoPray = {
       ...todoPray,
       id: id,
@@ -31,6 +32,8 @@ export const todoPrayModel = {
       targetPerson: todoPray.targetPerson,
       // 분반교사명
       teacherName: todoPray.teacherName,
+      // 분반교사 ID
+      teacherId: todoPray.teacherId,
       // 관계
       relationship: todoPray.relationship,
       // 내용
@@ -47,7 +50,10 @@ export const todoPrayModel = {
       mealCount: todoPray.mealCount,
       // 확답여부
       isConfirmed: todoPray.isConfirmed,
+      userId: todoPray.userId,
+      userEmail: todoPray.userEmail,
     }
+    console.log(savedTodoPray)
     set(ref(db, `todoPrays/${id}`), savedTodoPray)
 
     return savedTodoPray

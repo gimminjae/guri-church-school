@@ -23,27 +23,32 @@ const initialTodoPray: TodoPray = {
 }
 
 const initialUserData: UserData = {
-  area: 0,
+  area: "",
   fatherName: "",
   motherName: "",
   teacherName: "",
   teacherId: "",
   gender: "M",
-  classNumber: 0,
+  classNumber: "",
   schoolCode: "MIDDLE",
-  userId: ""
+  userId: "",
+  name: ""
 }
 
 export default function Home() {
   const { user, login, setDisplayName, metadata } = useAuth()
-  const [email, setEmail] = useState("")
+  const [name, setName] = useState("")
   const [password, setPassword] = useState("")
   const [todoPray, setTodoPray] = useState<TodoPray>(initialTodoPray)
   const [userData, setUserData] = useState<UserData>(initialUserData)
+  const [errors, setErrors] = useState({
+    teacherName: "",
+    classNumber: ""
+  })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    login(`${email}@guri-church.com`, password)
+    login(`${name}@guri-church.com`, password)
   }
 
   const { data: todoPrayList, refetch } = useCustomQuery<TodoPray[], Error>({
@@ -51,13 +56,43 @@ export default function Home() {
     queryFn: () => todoPrayModel.getTodoPrayListByUserId(user?.uid || "")
   })
 
+  const validateUserData = () => {
+    let isValid = true
+    const newErrors = {
+      teacherName: "",
+      classNumber: ""
+    }
+
+    if (!userData.teacherName.trim()) {
+      newErrors.teacherName = "분반교사명은 필수 입력값입니다."
+      isValid = false
+    }
+
+    if (!userData.classNumber) {
+      newErrors.classNumber = "소속 분반은 필수 입력값입니다."
+      isValid = false
+    }
+
+    setErrors(newErrors)
+    return isValid
+  }
+
   const saveUserData = useCallback(async () => {
+    if (!validateUserData()) {
+      return
+    }
+
     const savedUserData = {
       ...userData,
-      userId: user?.uid || ""
+      userId: user?.uid || "",
+      name: user?.email?.split("@")[0] || ""
     }
-    if (savedUserData?.userId) {
+    if (savedUserData?.id) {
       await userDataModel.updateUserData(savedUserData)
+      toast.success('사용자 정보가 저장되었습니다.')
+        ; (window?.document?.getElementById("user_modal") as any)?.close()
+    } else {
+      await userDataModel.writeUserData(savedUserData)
       toast.success('사용자 정보가 저장되었습니다.')
         ; (window?.document?.getElementById("user_modal") as any)?.close()
     }
@@ -69,19 +104,24 @@ export default function Home() {
       ...prev,
       [name]: type === 'number' ? Number(value) : value
     }))
+    // Clear error when user starts typing
+    if (name === 'teacherName' || name === 'classNumber') {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }))
+    }
   }
 
   useEffect(() => {
-    if (user && !metadata) {
-      (window?.document?.getElementById("user_modal") as any)?.showModal()
-    } else {
-      (window?.document?.getElementById("user_modal") as any)?.close()
-    }
+    setTimeout(() => {
+      if (user && !metadata) {
+        (window?.document?.getElementById("user_modal") as any)?.showModal()
+      } else {
+        (window?.document?.getElementById("user_modal") as any)?.close()
+      }
+    }, 1000)
   }, [user, metadata])
-
-  useEffect(() => {
-    console.log('metadata: ', metadata)
-  }, [metadata])
 
   const saveTodoPray = useCallback(async () => {
     const savedTodoPray = todoPray?.id ? {
@@ -90,14 +130,18 @@ export default function Home() {
       relationship: todoPray.relationship.trim(),
       content: todoPray.content.trim(),
       firstHalfAttendance: todoPray.firstHalfAttendance,
+      parentName: [metadata?.fatherName, metadata?.motherName].filter(name => !!name).join(" / "),
     } : {
       ...todoPray,
       leader: user?.displayName || "",
-      parentName: "",
-      teacherName: "",
-      evangelismArea: "",
+      parentName: [metadata?.fatherName, metadata?.motherName].filter(name => !!name).join(" / "),
+      teacherName: metadata?.teacherName || "",
+      teacherId: metadata?.teacherId || "",
+      evangelismArea: metadata?.area as number,
       invitationCount: 0,
       mealCount: 0,
+      userId: user?.uid || "",
+      userEmail: user?.email || "",
     }
     if (savedTodoPray?.id) {
       await todoPrayModel.updateTodoPray(savedTodoPray)
@@ -107,7 +151,7 @@ export default function Home() {
     refetch()
     setTodoPray(initialTodoPray)
     toast.success('저장되었습니다.')
-  }, [todoPray, user])
+  }, [todoPray, user, metadata])
 
   const handleTodoPrayChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target
@@ -153,6 +197,10 @@ export default function Home() {
       setDisplayName(util.getNameByEmail(user?.email || ""))
     }
   }, [user])
+
+  useEffect(() => {
+    if (user?.uid) refetch()
+  }, [user?.uid])
 
   const handleIncreaseInvitation = useCallback((id?: string) => async () => {
     if (id) {
@@ -257,11 +305,11 @@ export default function Home() {
               </label>
               <input
                 type="text"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
-                placeholder="이메일을 입력하세요"
+                placeholder="이름을 입력하세요"
                 required
               />
             </div>
@@ -297,43 +345,51 @@ export default function Home() {
 
             <label className="label">소속구역</label>
             <input
-              type="number"
               name="area"
               className="input w-full"
               value={userData.area}
-              onChange={handleUserDataChange}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (!isNaN(Number(value))) {
+                  if (Number(value) === 0) {
+                    e.target.value = ""
+                  }
+                  handleUserDataChange(e)
+                }
+              }}
               placeholder="소속구역을 입력하세요"
             />
 
-            <label className="label">부이름</label>
+            <label className="label">아버지 성함</label>
             <input
               type="text"
               name="fatherName"
               className="input w-full"
               value={userData.fatherName}
               onChange={handleUserDataChange}
-              placeholder="부이름을 입력하세요"
+              placeholder="아버지 성함을 입력하세요"
             />
 
-            <label className="label">모이름</label>
+            <label className="label">어머니 성함</label>
             <input
               type="text"
               name="motherName"
               className="input w-full"
               value={userData.motherName}
               onChange={handleUserDataChange}
-              placeholder="모이름을 입력하세요"
+              placeholder="어머니 성함을 입력하세요"
             />
 
-            <label className="label">분반교사명</label>
+            <label className="label">분반교사명 *</label>
             <input
               type="text"
               name="teacherName"
-              className="input w-full"
+              className={`input w-full ${errors.teacherName ? 'input-error' : ''}`}
               value={userData.teacherName}
               onChange={handleUserDataChange}
               placeholder="분반교사명을 입력하세요"
             />
+            {errors.teacherName && <div className="text-error text-sm mt-1">{errors.teacherName}</div>}
 
             <label className="label">성별</label>
             <select
@@ -346,15 +402,23 @@ export default function Home() {
               <option value="W">여자</option>
             </select>
 
-            <label className="label">소속 분반</label>
+            <label className="label">소속 분반 *</label>
             <input
-              type="number"
               name="classNumber"
-              className="input w-full"
+              className={`input w-full ${errors.classNumber ? 'input-error' : ''}`}
               value={userData.classNumber}
-              onChange={handleUserDataChange}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (!isNaN(Number(value))) {
+                  if (Number(value) === 0) {
+                    e.target.value = ""
+                  }
+                  handleUserDataChange(e)
+                }
+              }}
               placeholder="소속 분반을 입력하세요"
             />
+            {errors.classNumber && <div className="text-error text-sm mt-1">{errors.classNumber}</div>}
 
             <label className="label">소속 분반 코드</label>
             <select

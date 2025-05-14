@@ -18,13 +18,21 @@ export const userDataModel = {
     const id = util.getUuid()
     const now = new Date()
     const nowStr = util.getFormattedDateTime(now)
+    // Get teacherId from userData based on teacherName
+    let teacherId = ""
+    const userDataSnapshot = await userDataModel.getUserDataByName(userData.teacherName)
+    if (userDataSnapshot?.exists()) {
+      const userData = Object.values(userDataSnapshot.val())[0] as UserData
+      console.log(userData)
+      teacherId = userData.userId
+    }
     const savedUserData = {
       ...userData,
       id: id,
       createdAt: nowStr,
       updatedAt: nowStr,
       // 소속구역
-      area: userData.area,
+      area: userData.area as number,
       // 부이름
       fatherName: userData.fatherName,
       // 모이름
@@ -32,17 +40,32 @@ export const userDataModel = {
       // 분반교사명
       teacherName: userData.teacherName,
       // 분반교사 uid
-      teacherId: userData.teacherId,
+      teacherId: teacherId,
       // 성별 여부
       gender: userData.gender,
       // 소속 분반
-      classNumber: userData.classNumber,
+      classNumber: userData.classNumber as number,
       // 소속 분반 코드
       schoolCode: userData.schoolCode,
     }
     set(ref(db, `userData/${id}`), savedUserData)
 
     return savedUserData
+  },
+
+  async getUserDataByName(name: string) {
+    store.dispatch(loadingActions.loading())
+    try {
+      const snapshot = await get(
+        query(ref(db, "userData"), orderByChild("name"), equalTo(name))
+      )
+      return snapshot
+    } catch (error) {
+      console.error(error)
+      return null
+    } finally {
+      store.dispatch(loadingActions.complete())
+    }
   },
 
   async getUserDataListByPage(page: number, size: number) {
@@ -60,6 +83,22 @@ export const userDataModel = {
       const startIndex = (page - 1) * size
       const endIndex = startIndex + size
       return sortedUserData.slice(startIndex, endIndex)
+    } catch (error) {
+      console.log(error)
+      return []
+    } finally {
+      store.dispatch(loadingActions.complete())
+    }
+  },
+
+  async getUserDataByUserId(userId: string) {
+    store.dispatch(loadingActions.loading())
+    try {
+      const snapshot = await get(
+        query(ref(db, "userData"), orderByChild("userId"), equalTo(userId))
+      )
+      const result = snapshot?.val()
+      return result ? Object.values(result) : []
     } catch (error) {
       console.log(error)
       return []
@@ -96,6 +135,21 @@ export const userDataModel = {
     } catch (error) {
       console.log(error)
       return []
+    } finally {
+      store.dispatch(loadingActions.complete())
+    }
+  },
+
+  async getUserDataByTeacherName(teacherName: string) {
+    store.dispatch(loadingActions.loading())
+    try {
+      const snapshot = await get(
+        query(ref(db, "userData"), orderByChild("teacherName"), equalTo(teacherName))
+      )
+      return snapshot
+    } catch (error) {
+      console.log(error)
+      return null
     } finally {
       store.dispatch(loadingActions.complete())
     }

@@ -49,8 +49,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (user?.uid) {
       const getMetadata = async () => {
-        const userData = await userDataModel.getUserDataById(user.uid)
-        setMetadata(userData)
+        const userData = await userDataModel.getUserDataByUserId(user.uid)
+        setMetadata(userData[0] as UserData)
       }
       getMetadata()
     }

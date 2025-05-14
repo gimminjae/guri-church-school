@@ -1,6 +1,10 @@
 interface UserData {
+    id?: string
+    createdAt?: string
+    updatedAt?: string
+    createdAtTimeStamp?: number
     // 소속구역
-    area: number
+    area: number | string
     // 부이름 
     fatherName: string
     // 모이름
@@ -12,9 +16,11 @@ interface UserData {
     // 성별 여부
     gender: 'M' | 'W'
     // 소속 분반
-    classNumber: number
+    classNumber: number | string
     // 소속 분반 코드
     schoolCode: 'MIDDLE' | 'HIGH'
     // 사용자 uid
     userId: string
+    // 사용자 이름
+    name: string
 }
