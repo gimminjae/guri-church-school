@@ -6,7 +6,7 @@ function Layout({ children }: React.PropsWithChildren<{}>) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 pt-16">
+      <main className="flex-1 pt-16 mb-30">
         {children}
       </main>
     </div>
