@@ -20,5 +20,5 @@ interface TodoPray {
   // 소속 분반
   classNumber?: number | string
   // 소속 분반 코드
-  schoolCode?: 'MIDDLE' | 'HIGH'
+  schoolCode?: 'MIDDLE' | 'HIGH' | string
 }

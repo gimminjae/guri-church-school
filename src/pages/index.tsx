@@ -47,7 +47,7 @@ export default function Home() {
   })
 
   const saveTodoPray = useCallback(async () => {
-    const savedTodoPray = todoPray?.id ? {
+    const savedTodoPray: TodoPray = todoPray?.id ? {
       ...todoPray,
       targetPerson: todoPray.targetPerson.trim(),
       relationship: todoPray.relationship.trim(),
