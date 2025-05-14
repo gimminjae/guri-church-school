@@ -4,12 +4,12 @@ import useCRouter from "@/hooks/useCRouter"
 
 function Layout({ children }: React.PropsWithChildren<{}>) {
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <div className="pt-20 pb-30">
+      <main className="flex-1 pt-16">
         {children}
-      </div>
-    </>
+      </main>
+    </div>
   )
 }
 

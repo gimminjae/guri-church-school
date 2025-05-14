@@ -29,7 +29,7 @@ const Header = () => {
   }, [router.pathname])
 
   return (
-    <header className="sticky top-0 z-30">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-base-100">
       <HeaderNavbar />
     </header>
   )

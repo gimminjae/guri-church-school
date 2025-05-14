@@ -139,6 +139,20 @@ export default function Home() {
     }
   }, [])
 
+  const handleDecreaseInvitation = useCallback((id?: string) => async () => {
+    if (id) {
+      await todoPrayModel.decreaseInvitationCount(id)
+      refetch()
+    }
+  }, [])
+
+  const handleDecreaseMeal = useCallback((id?: string) => async () => {
+    if (id) {
+      await todoPrayModel.decreaseMealCount(id)
+      refetch()
+    }
+  }, [])
+
   const handleToggleConfirmed = useCallback((id?: string) => async () => {
     if (id) {
       await todoPrayModel.toggleConfirmed(id)
@@ -200,8 +214,8 @@ export default function Home() {
                       </div>
                       <div className="flex justify-end gap-1 text-xs opacity-60">
                         {todoPray.firstHalfAttendance && <span className="badge badge-soft badge-sm font-bold">상반기 집회</span>}
-                        {todoPray.invitationCount > 0 && <span className="badge badge-soft badge-sm badge-info font-bold">권유<div className="badge badge-xs">{todoPray.invitationCount}</div></span>}
-                        {todoPray.mealCount > 0 && <span className="badge badge-soft badge-sm badge-success font-bold">식사<div className="badge badge-xs">{todoPray.mealCount}</div></span>}
+                        {todoPray.invitationCount > 0 && <span className="badge badge-soft badge-sm badge-info font-bold cursor-pointer" onClick={handleDecreaseInvitation(todoPray?.id)}>권유<div className="badge badge-xs">{todoPray.invitationCount}</div></span>}
+                        {todoPray.mealCount > 0 && <span className="badge badge-soft badge-sm badge-success font-bold cursor-pointer" onClick={handleDecreaseMeal(todoPray?.id)}>식사<div className="badge badge-xs">{todoPray.mealCount}</div></span>}
                         {todoPray.isConfirmed && <span className="badge badge-soft badge-sm badge-primary font-bold">확답</span>}
                       </div>
                       <div className="flex justify-between gap-2">

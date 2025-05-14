@@ -189,6 +189,21 @@ export const todoPrayModel = {
     }
   },
 
+  async decreaseInvitationCount(id: string) {
+    try {
+      const todoPray = await this.getTodoPrayById(id)
+      if (!todoPray) return
+
+      return await update(ref(db, `/todoPrays/${id}`), {
+        ...todoPray,
+        invitationCount: Math.max(0, (todoPray.invitationCount || 0) - 1),
+        updatedAt: util.getFormattedCurrentDateTime(),
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
   async increaseMealCount(id: string) {
     try {
       const todoPray = await this.getTodoPrayById(id)
@@ -197,6 +212,21 @@ export const todoPrayModel = {
       return await update(ref(db, `/todoPrays/${id}`), {
         ...todoPray,
         mealCount: (todoPray.mealCount || 0) + 1,
+        updatedAt: util.getFormattedCurrentDateTime(),
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
+  async decreaseMealCount(id: string) {
+    try {
+      const todoPray = await this.getTodoPrayById(id)
+      if (!todoPray) return
+
+      return await update(ref(db, `/todoPrays/${id}`), {
+        ...todoPray,
+        mealCount: Math.max(0, (todoPray.mealCount || 0) - 1),
         updatedAt: util.getFormattedCurrentDateTime(),
       })
     } catch (error) {
