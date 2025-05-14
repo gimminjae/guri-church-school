@@ -164,12 +164,12 @@ export default function Home() {
                   나의 전도대상자
                 </div>
                 <div>
-                  <button
+                  {metadata && <button
                     className="btn btn-sm"
                     onClick={handleClick}
                   >
                     <CiEdit className="mr-2" />기도부탁자 등록
-                  </button>
+                  </button>}
                 </div>
               </li>
 

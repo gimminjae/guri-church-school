@@ -6,7 +6,7 @@ import { userDataModel } from "@/firebase/userdata"
 
 const Header = () => {
 
-  const { user } = useAuth()
+  const { user, metadata } = useAuth()
   const router = useCRouter()
 
   useEffect(() => {
@@ -18,14 +18,15 @@ const Header = () => {
   useEffect(() => {
     if (user && !router.pathname.includes('/metadata')) {
       const checkMetadata = async () => {
-        const userMetadata = await userDataModel.getUserDataByUserId(user.uid)
-        if (!userMetadata || userMetadata.length === 0) {
+        // const userMetadata = await userDataModel.getUserDataByUserId(user.uid)
+        // if (!userMetadata || userMetadata.length === 0) {
+        if (!metadata) {
           router.push({ path: '/metadata' })
         }
       }
       checkMetadata()
     }
-  }, [user])
+  }, [router.pathname])
 
   return (
     <header className="sticky top-0 z-30">

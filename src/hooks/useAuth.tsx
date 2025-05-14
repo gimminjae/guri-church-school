@@ -28,6 +28,7 @@ interface AuthContextType {
   loginWithGoogle: () => Promise<void>
   setDisplayName: (displayName: string) => Promise<void>
   metadata: UserData | null
+  changePassword: (password: string) => Promise<void>
 }
 
 // AuthContext 컨텍스트 생성
@@ -39,6 +40,7 @@ const AuthContext = createContext<AuthContextType>({
   loginWithGoogle: async () => { },
   setDisplayName: async () => { },
   metadata: null,
+  changePassword: async () => { },
 })
 
 // AuthProvider 컴포넌트 정의
@@ -79,6 +81,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await createUserWithEmailAndPassword(auth, email, password)
   }
 
+  const changePassword = async (password: string) => {
+    if (auth.currentUser) {
+      await updatePassword(auth.currentUser, password)
+    }
+  }
+
   // 로그아웃 함수
   const logout = async () => {
     await signOut(auth)
@@ -102,7 +110,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, loginWithGoogle, setDisplayName, metadata }}
+      value={{ user, login, register, logout, loginWithGoogle, setDisplayName, changePassword, metadata }}
     >
       {children}
     </AuthContext.Provider>

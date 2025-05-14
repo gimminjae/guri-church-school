@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth"
 import useCRouter from "@/hooks/useCRouter"
 import Link from "next/link"
 import { memo, useCallback } from "react"
-import { FaArrowRightFromBracket, FaGoogle } from "react-icons/fa6"
+import { FaArrowRightFromBracket, FaGoogle, FaKey } from "react-icons/fa6"
 import { IoMdSettings } from "react-icons/io"
 import { MdSpaceDashboard } from "react-icons/md"
 import { RxAvatar } from "react-icons/rx"
@@ -69,12 +69,12 @@ function HeaderNavbar() {
                 tabIndex={1}
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
               >
-                {/* <li>
-                  <a onClick={move(`/`)}>
-                    <MdSpaceDashboard className="mr-2" />
-                    마이페이지
-                  </a>
-                </li> */}
+                <li>
+                  <Link href="/changepw">
+                    <FaKey className="mr-2" />
+                    비밀번호 변경
+                  </Link>
+                </li>
                 <li>
                   <a onClick={handleLogout}>
                     <FaArrowRightFromBracket className="mr-2" />
