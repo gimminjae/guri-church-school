@@ -47,6 +47,7 @@ export const userDataModel = {
       classNumber: userData.classNumber as number,
       // 소속 분반 코드
       schoolCode: userData.schoolCode,
+      isTeader: false
     }
     set(ref(db, `userData/${id}`), savedUserData)
 

@@ -23,4 +23,6 @@ interface UserData {
     userId: string
     // 사용자 이름
     name: string
+    // 분반교사여부
+    isTeacher?: boolean
 }

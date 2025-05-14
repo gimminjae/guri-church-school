@@ -3,7 +3,6 @@ import { useAuth } from "@/hooks/useAuth"
 import MetaHead from "@/components/common/Head"
 import util from "@/util/util"
 import { todoPrayModel } from "@/firebase/todopray"
-import { userDataModel } from "@/firebase/userdata"
 import { useCustomQuery } from "@/hooks/useCustomQuery"
 import { CiEdit, CiTrash } from "react-icons/ci";
 import { toast } from "react-toastify"
@@ -22,106 +21,30 @@ const initialTodoPray: TodoPray = {
   isConfirmed: false
 }
 
-const initialUserData: UserData = {
-  area: "",
-  fatherName: "",
-  motherName: "",
-  teacherName: "",
-  teacherId: "",
-  gender: "M",
-  classNumber: "",
-  schoolCode: "MIDDLE",
-  userId: "",
-  name: ""
-}
-
 export default function Home() {
-  const { user, login, setDisplayName, metadata } = useAuth()
+  const { user, login, setDisplayName, metadata, register } = useAuth()
   const [name, setName] = useState("")
   const [password, setPassword] = useState("")
   const [todoPray, setTodoPray] = useState<TodoPray>(initialTodoPray)
-  const [userData, setUserData] = useState<UserData>(initialUserData)
-  const [errors, setErrors] = useState({
-    teacherName: "",
-    classNumber: ""
-  })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    login(`${name}@guri-church.com`, password)
+    try {
+      await login(`${name}@guri-church.com`, password)
+    } catch (error) {
+      if (password === '123456') {
+        console.error(error)
+        await register(`${name}@guri-church.com`, password)
+        await login(`${name}@guri-church.com`, password)
+      }
+      toast.error('로그인에 실패했습니다.')
+    }
   }
 
   const { data: todoPrayList, refetch } = useCustomQuery<TodoPray[], Error>({
     key: "todoPrayList",
     queryFn: () => todoPrayModel.getTodoPrayListByUserId(user?.uid || "")
   })
-
-  const validateUserData = () => {
-    let isValid = true
-    const newErrors = {
-      teacherName: "",
-      classNumber: ""
-    }
-
-    if (!userData.teacherName.trim()) {
-      newErrors.teacherName = "분반교사명은 필수 입력값입니다."
-      isValid = false
-    }
-
-    if (!userData.classNumber) {
-      newErrors.classNumber = "소속 분반은 필수 입력값입니다."
-      isValid = false
-    }
-
-    setErrors(newErrors)
-    return isValid
-  }
-
-  const saveUserData = useCallback(async () => {
-    if (!validateUserData()) {
-      return
-    }
-
-    const savedUserData = {
-      ...userData,
-      userId: user?.uid || "",
-      name: user?.email?.split("@")[0] || ""
-    }
-    if (savedUserData?.id) {
-      await userDataModel.updateUserData(savedUserData)
-      toast.success('사용자 정보가 저장되었습니다.')
-        ; (window?.document?.getElementById("user_modal") as any)?.close()
-    } else {
-      await userDataModel.writeUserData(savedUserData)
-      toast.success('사용자 정보가 저장되었습니다.')
-        ; (window?.document?.getElementById("user_modal") as any)?.close()
-    }
-  }, [userData, user])
-
-  const handleUserDataChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target
-    setUserData(prev => ({
-      ...prev,
-      [name]: type === 'number' ? Number(value) : value
-    }))
-    // Clear error when user starts typing
-    if (name === 'teacherName' || name === 'classNumber') {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ""
-      }))
-    }
-  }
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (user && !metadata) {
-        (window?.document?.getElementById("user_modal") as any)?.showModal()
-      } else {
-        (window?.document?.getElementById("user_modal") as any)?.close()
-      }
-    }, 1000)
-  }, [user, metadata])
 
   const saveTodoPray = useCallback(async () => {
     const savedTodoPray = todoPray?.id ? {
@@ -131,6 +54,8 @@ export default function Home() {
       content: todoPray.content.trim(),
       firstHalfAttendance: todoPray.firstHalfAttendance,
       parentName: [metadata?.fatherName, metadata?.motherName].filter(name => !!name).join(" / "),
+      schoolCode: metadata?.schoolCode || "MIDDLE",
+      classNumber: metadata?.classNumber || "",
     } : {
       ...todoPray,
       leader: user?.displayName || "",
@@ -142,6 +67,8 @@ export default function Home() {
       mealCount: 0,
       userId: user?.uid || "",
       userEmail: user?.email || "",
+      schoolCode: metadata?.schoolCode || "MIDDLE",
+      classNumber: metadata?.classNumber || "",
     }
     if (savedTodoPray?.id) {
       await todoPrayModel.updateTodoPray(savedTodoPray)
@@ -189,10 +116,6 @@ export default function Home() {
   }, [todoPrayList])
 
   useEffect(() => {
-    console.log('todoPrayList', todoPrayList)
-  }, [todoPrayList])
-
-  useEffect(() => {
     if (!user?.displayName) {
       setDisplayName(util.getNameByEmail(user?.email || ""))
     }
@@ -206,7 +129,6 @@ export default function Home() {
     if (id) {
       await todoPrayModel.increaseInvitationCount(id)
       refetch()
-      // toast.success('권유 횟수가 증가되었습니다.')
     }
   }, [])
 
@@ -214,7 +136,6 @@ export default function Home() {
     if (id) {
       await todoPrayModel.increaseMealCount(id)
       refetch()
-      // toast.success('식사 횟수가 증가되었습니다.')
     }
   }, [])
 
@@ -222,21 +143,20 @@ export default function Home() {
     if (id) {
       await todoPrayModel.toggleConfirmed(id)
       refetch()
-      // toast.success('확답 여부가 변경되었습니다.')
     }
   }, [])
 
   return (
     <div className="w-full flex flex-col items-center gap-5">
-      <MetaHead title="Home | The Note" content="Welcome to The Note" />
+      <MetaHead title="마이페이지" content="Welcome to The Note" />
 
       {user ? (
         <>
           <div className="text-2xl font-bold">
-            {user?.displayName ? `환영합니다, ${user?.displayName}${util.getGenderByCode(userData?.gender)}님!` : '환영합니다!'}
+            {user?.displayName ? `환영합니다, ${user?.displayName}${util.getGenderByCode(metadata?.gender)}님!` : '환영합니다!'}
           </div>
           <div className="flex justify-center w-[100%]">
-            <ul className="list bg-base-100 rounded-box shadow-md block w-[100%]">
+            <ul className="list bg-base-100 rounded-box block w-[100%]">
 
               <li className="flex justify-between items-center px-4">
                 <div className="pb-2 text-xs opacity-60 tracking-wide font-bold flex items-center gap-2">
@@ -336,112 +256,6 @@ export default function Home() {
           </form>
         </div>
       )}
-
-      <dialog id="user_modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box w-full max-w-md sm:max-w-xl mx-0 sm:mx-auto">
-          <h3 className="font-bold text-lg">사용자 정보 등록</h3>
-          <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
-            <legend className="fieldset-legend"></legend>
-
-            <label className="label">소속구역</label>
-            <input
-              name="area"
-              className="input w-full"
-              value={userData.area}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (!isNaN(Number(value))) {
-                  if (Number(value) === 0) {
-                    e.target.value = ""
-                  }
-                  handleUserDataChange(e)
-                }
-              }}
-              placeholder="소속구역을 입력하세요"
-            />
-
-            <label className="label">아버지 성함</label>
-            <input
-              type="text"
-              name="fatherName"
-              className="input w-full"
-              value={userData.fatherName}
-              onChange={handleUserDataChange}
-              placeholder="아버지 성함을 입력하세요"
-            />
-
-            <label className="label">어머니 성함</label>
-            <input
-              type="text"
-              name="motherName"
-              className="input w-full"
-              value={userData.motherName}
-              onChange={handleUserDataChange}
-              placeholder="어머니 성함을 입력하세요"
-            />
-
-            <label className="label">분반교사명 *</label>
-            <input
-              type="text"
-              name="teacherName"
-              className={`input w-full ${errors.teacherName ? 'input-error' : ''}`}
-              value={userData.teacherName}
-              onChange={handleUserDataChange}
-              placeholder="분반교사명을 입력하세요"
-            />
-            {errors.teacherName && <div className="text-error text-sm mt-1">{errors.teacherName}</div>}
-
-            <label className="label">성별</label>
-            <select
-              name="gender"
-              className="select w-full"
-              value={userData.gender}
-              onChange={handleUserDataChange}
-            >
-              <option value="M">남자</option>
-              <option value="W">여자</option>
-            </select>
-
-            <label className="label">소속 분반 *</label>
-            <input
-              name="classNumber"
-              className={`input w-full ${errors.classNumber ? 'input-error' : ''}`}
-              value={userData.classNumber}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (!isNaN(Number(value))) {
-                  if (Number(value) === 0) {
-                    e.target.value = ""
-                  }
-                  handleUserDataChange(e)
-                }
-              }}
-              placeholder="소속 분반을 입력하세요"
-            />
-            {errors.classNumber && <div className="text-error text-sm mt-1">{errors.classNumber}</div>}
-
-            <label className="label">소속 분반 코드</label>
-            <select
-              name="schoolCode"
-              className="select w-full"
-              value={userData.schoolCode}
-              onChange={handleUserDataChange}
-            >
-              <option value="MIDDLE">중등부</option>
-              <option value="HIGH">고등부</option>
-            </select>
-
-          </fieldset>
-          <div className="modal-action">
-            <form method="dialog" className="flex gap-3">
-              <button className="btn" onClick={saveUserData}>
-                저장
-              </button>
-              <button className="btn">취소</button>
-            </form>
-          </div>
-        </div>
-      </dialog>
 
       <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box w-full max-w-md sm:max-w-xl mx-0 sm:mx-auto">

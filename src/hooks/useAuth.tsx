@@ -64,7 +64,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // 로그인 함수
   const login = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password)
+    try {
+      console.log('로그인 시도:', auth, email, password)
+      const result = await signInWithEmailAndPassword(auth, email, password)
+      console.log('로그인 성공:', result)
+    } catch (error) {
+      console.error("로그인 실패:", error)
+      throw error
+    }
   }
 
   // 회원가입 함수

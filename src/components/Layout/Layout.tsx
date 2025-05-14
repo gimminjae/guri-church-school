@@ -6,7 +6,7 @@ function Layout({ children }: React.PropsWithChildren<{}>) {
   return (
     <>
       <Header />
-      <div className="pt-20">
+      <div className="pt-20 pb-30">
         {children}
       </div>
     </>

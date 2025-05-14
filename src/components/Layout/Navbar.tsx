@@ -6,6 +6,7 @@ import { FaArrowRightFromBracket, FaGoogle } from "react-icons/fa6"
 import { IoMdSettings } from "react-icons/io"
 import { MdSpaceDashboard } from "react-icons/md"
 import { RxAvatar } from "react-icons/rx"
+import { FaList } from "react-icons/fa6"
 
 function HeaderNavbar() {
   const { user, logout, loginWithGoogle } = useAuth()
@@ -80,6 +81,11 @@ function HeaderNavbar() {
                     로그아웃
                   </a>
                 </li>
+                {user.email === '김민재@guri-church.com' && <li>
+                  <Link href="/onlyadmin">
+                    admin
+                  </Link>
+                </li>}
               </ul>
             </div>
           ) : (
@@ -110,18 +116,7 @@ function HeaderNavbar() {
           </li>
           <li>
             <Link href={`/todoprays`} className="tooltip" data-tip="Details">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <FaList className="text-2xl" />
             </Link>
           </li>
           <li>

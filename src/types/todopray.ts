@@ -17,4 +17,8 @@ interface TodoPray {
   userId?: string
   userEmail?: string
   teacherId?: string
+  // 소속 분반
+  classNumber?: number | string
+  // 소속 분반 코드
+  schoolCode?: 'MIDDLE' | 'HIGH'
 }

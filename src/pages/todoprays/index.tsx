@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { todoPrayModel } from "@/firebase/todopray"
 import { useCustomQuery } from "@/hooks/useCustomQuery"
 import MetaHead from "@/components/common/Head"
@@ -13,6 +13,29 @@ export default function TodoPrays() {
         console.log('all todoPrayList', todoPrayList)
     }, [todoPrayList])
 
+    const sortedTodoPrayList = useMemo(() => {
+        if (!todoPrayList) return []
+
+        return [...todoPrayList].sort((a, b) => {
+            // 1. 중등/고등 비교 (중등이 먼저)
+            const schoolCodeA = a.schoolCode || 'MIDDLE'
+            const schoolCodeB = b.schoolCode || 'MIDDLE'
+            if (schoolCodeA !== schoolCodeB) {
+                return schoolCodeA === 'MIDDLE' ? -1 : 1
+            }
+
+            // 2. 반 숫자 순 정렬
+            const classNumberA = Number(a.classNumber) || 0
+            const classNumberB = Number(b.classNumber) || 0
+            if (classNumberA !== classNumberB) {
+                return classNumberA - classNumberB
+            }
+
+            // 3. leader 이름 정렬
+            return (a.leader || '').localeCompare(b.leader || '')
+        })
+    }, [todoPrayList])
+
     return (
         <div className="w-full flex flex-col items-center gap-5">
             <MetaHead title="전체 기도부탁자 | The Note" content="전체 기도부탁자 목록" />
@@ -20,8 +43,8 @@ export default function TodoPrays() {
             <div className="text-2xl font-bold">전체 기도부탁자 목록</div>
 
             <div className="flex justify-center w-[100%]">
-                <ul className="list bg-base-100 rounded-box shadow-md block w-[100%]">
-                    {todoPrayList?.map((todoPray) => (
+                <ul className="list bg-base-100 rounded-box block w-[100%]">
+                    {sortedTodoPrayList?.map((todoPray) => (
                         <li key={todoPray.id} className="border-b border-base-300 my-1 py-1 px-4">
                             <div>
                                 <div className="flex justify-between items-center">
