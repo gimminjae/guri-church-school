@@ -29,6 +29,7 @@ interface AuthContextType {
   setDisplayName: (displayName: string) => Promise<void>
   metadata: UserData | null
   changePassword: (password: string) => Promise<void>
+  refetchMetadata: () => Promise<void>
 }
 
 // AuthContext 컨텍스트 생성
@@ -41,6 +42,7 @@ const AuthContext = createContext<AuthContextType>({
   setDisplayName: async () => { },
   metadata: null,
   changePassword: async () => { },
+  refetchMetadata: async () => { },
 })
 
 // AuthProvider 컴포넌트 정의
@@ -48,15 +50,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [metadata, setMetadata] = useState<UserData | null>(null)
 
+  const getMetadata = async () => {
+    const userData = user?.uid ? await userDataModel.getUserDataByUserId(user?.uid) : ''
+    setMetadata(userData[0] as UserData)
+  }
+
   useEffect(() => {
     if (user?.uid) {
-      const getMetadata = async () => {
-        const userData = await userDataModel.getUserDataByUserId(user.uid)
-        setMetadata(userData[0] as UserData)
-      }
       getMetadata()
     }
   }, [user?.uid])
+
+  const refetchMetadata = async () => {
+    if (user?.uid) {
+      getMetadata()
+    }
+  }
 
   // 사용자 상태 업데이트
   useEffect(() => {
@@ -110,7 +119,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, loginWithGoogle, setDisplayName, changePassword, metadata }}
+      value={{ user, login, register, logout, loginWithGoogle, setDisplayName, changePassword, refetchMetadata, metadata }}
     >
       {children}
     </AuthContext.Provider>

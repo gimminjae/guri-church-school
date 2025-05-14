@@ -14,11 +14,11 @@ interface UserData {
     // 분반교사 uid
     teacherId: string
     // 성별 여부
-    gender: 'M' | 'W'
+    gender: 'M' | 'W' | string
     // 소속 분반
     classNumber: number | string
     // 소속 분반 코드
-    schoolCode: 'MIDDLE' | 'HIGH'
+    schoolCode: 'MIDDLE' | 'HIGH' | string
     // 사용자 uid
     userId: string
     // 사용자 이름

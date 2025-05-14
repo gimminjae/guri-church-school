@@ -19,7 +19,7 @@ const initialUserData: UserData = {
 }
 
 export default function Metadata() {
-    const { user, metadata } = useAuth()
+    const { user, metadata, refetchMetadata } = useAuth()
     const [userData, setUserData] = useState<UserData>(initialUserData)
     const [errors, setErrors] = useState({
         teacherName: "",
@@ -67,7 +67,8 @@ export default function Metadata() {
             toast.success('사용자 정보가 저장되었습니다.')
         }
         router.push({ path: '/' })
-    }, [userData, user])
+        refetchMetadata()
+    }, [userData, user, refetchMetadata])
 
     const handleUserDataChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target
