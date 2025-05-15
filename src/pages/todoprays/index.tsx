@@ -165,8 +165,8 @@ export default function TodoPrays() {
         </div>
       </div>
 
-      <div className="flex justify-center w-[100%] flex-1 overflow-hidden">
-        <ul className="list bg-base-100 rounded-box block w-[100%] h-[60%] overflow-y-auto">
+      <div className="flex justify-center w-[100%] flex-1 animate-fade-up">
+        <ul className="list bg-base-100 rounded-box block w-[100%] h-[60%] overflow-y-auto overflow-y-hidden">
           {filteredAndSortedTodoPrayList?.map((todoPray) => (
             <li key={todoPray.id} className="border-b border-base-300 my-1 py-1 px-4">
               <div>

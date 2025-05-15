@@ -24,6 +24,7 @@
     "react-toastify": "^10.0.5",
     "redux": "^5.0.1",
     "remove-markdown": "^0.5.0",
+    "tailwindcss-animated": "^2.0.0",
     "uuid": "^10.0.0",
     "zustand": "^4.5.5"
   },

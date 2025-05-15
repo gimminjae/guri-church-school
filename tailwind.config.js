@@ -7,6 +7,7 @@ const config = {
   },
   plugins: [
     require("daisyui"), // 추가
+    require('tailwindcss-animated')
   ],
 }
 export default config

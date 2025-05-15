@@ -189,7 +189,7 @@ export default function Home() {
 
               {
                 todoPrayList?.map((todoPray) => (
-                  <li key={todoPray.id} className="border-b border-base-300 my-3 py-3">
+                  <li key={todoPray.id} className="border-b border-base-300 my-3 py-3 animate-fade-up">
                     <div className="flex flex-col gap-2">
                       <div className="flex justify-between items-center">
                         <div>
