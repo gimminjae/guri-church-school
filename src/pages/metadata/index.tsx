@@ -67,8 +67,10 @@ export default function Metadata() {
       toast.success('사용자 정보가 저장되었습니다.')
     }
     await refetchMetadata()
-    router.push({ path: '/' })
-  }, [userData, user, refetchMetadata])
+    setTimeout(() => {
+      router.push({ path: '/' })
+    }, 1000)
+  }, [userData, user, refetchMetadata, metadata])
 
   const handleUserDataChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target

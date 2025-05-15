@@ -76,95 +76,97 @@ export default function TodoPrays() {
   }, [todoPrayList, filters])
 
   return (
-    <div className="w-full flex flex-col items-center gap-5 h-screen">
+    <div className="w-full flex flex-col items-center gap-5 h-screen overflow-hidden">
       <MetaHead title="전체 기도부탁자 | The Note" content="전체 기도부탁자 목록" />
 
-      <div className="text-2xl font-bold pt-4">전체 기도부탁자 목록</div>
+      <div className="w-full flex flex-col items-center gap-3">
+        <div className="text-2xl font-bold pt-4">전체 기도부탁자 목록</div>
 
-      <div className="w-full max-w-4xl flex items-center px-4">
-        <div className="flex gap-2 min-w-max">
-          <select
-            name="schoolCode"
-            value={filters.schoolCode}
-            onChange={handleFilterChange}
-            className="select select-bordered select-sm w-24"
-          >
-            <option value="">전체</option>
-            <option value="MIDDLE">중등</option>
-            <option value="HIGH">고등</option>
-          </select>
+        <div className="w-full max-w-4xl flex items-center px-4 justify-center">
+          <div className="flex gap-2 min-w-max">
+            <select
+              name="schoolCode"
+              value={filters.schoolCode}
+              onChange={handleFilterChange}
+              className="select select-bordered select-sm w-24"
+            >
+              <option value="">전체</option>
+              <option value="MIDDLE">중등</option>
+              <option value="HIGH">고등</option>
+            </select>
 
-          <input
-            type="text"
-            name="classNumber"
-            value={filters.classNumber}
-            onChange={handleFilterChange}
-            placeholder="반"
-            className="input input-bordered input-sm w-16"
-          />
+            <input
+              type="text"
+              name="classNumber"
+              value={filters.classNumber}
+              onChange={handleFilterChange}
+              placeholder="반"
+              className="input input-bordered input-sm w-16"
+            />
 
-          <input
-            type="text"
-            name="teacherName"
-            value={filters.teacherName}
-            onChange={handleFilterChange}
-            placeholder="분반교사"
-            className="input input-bordered input-sm w-24"
-          />
+            <input
+              type="text"
+              name="teacherName"
+              value={filters.teacherName}
+              onChange={handleFilterChange}
+              placeholder="분반교사"
+              className="input input-bordered input-sm w-24"
+            />
+          </div>
         </div>
-      </div>
 
-      <div className="w-full max-w-4xl flex items-center px-4">
-        <div className="flex gap-2 mb-4 min-w-max">
+        <div className="w-full max-w-4xl flex items-center px-4 justify-center">
+          <div className="flex gap-2 mb-4 min-w-max">
 
-          {/* <select
-                        name="schoolCode"
-                        value={filters.schoolCode}
-                        onChange={handleFilterChange}
-                        className="select select-bordered select-sm w-24"
-                    >
-                        <option value="">전체</option>
-                        <option value="MIDDLE">중등</option>
-                        <option value="HIGH">고등</option>
-                    </select> */}
+            {/* <select
+                  name="schoolCode"
+                  value={filters.schoolCode}
+                  onChange={handleFilterChange}
+                  className="select select-bordered select-sm w-24"
+              >
+                  <option value="">전체</option>
+                  <option value="MIDDLE">중등</option>
+                  <option value="HIGH">고등</option>
+              </select> */}
 
-          <input
-            type="text"
-            name="targetPerson"
-            value={filters.targetPerson}
-            onChange={handleFilterChange}
-            placeholder="이름"
-            className="input input-bordered input-sm w-24"
-          />
+            <input
+              type="text"
+              name="targetPerson"
+              value={filters.targetPerson}
+              onChange={handleFilterChange}
+              placeholder="이름"
+              className="input input-bordered input-sm w-24"
+            />
 
-          <input
-            type="text"
-            name="leader"
-            value={filters.leader}
-            onChange={handleFilterChange}
-            placeholder="인도자"
-            className="input input-bordered input-sm w-24"
-          />
+            <input
+              type="text"
+              name="leader"
+              value={filters.leader}
+              onChange={handleFilterChange}
+              placeholder="인도자"
+              className="input input-bordered input-sm w-24"
+            />
 
-          <button
-            onClick={() => {
-              setFilters({
-                schoolCode: '',
-                classNumber: '',
-                teacherName: '',
-                targetPerson: '',
-                leader: ''
-              });
-            }}
-            className="btn btn-ghost btn-sm"
-          >
-            초기화
-          </button>
+            <button
+              onClick={() => {
+                setFilters({
+                  schoolCode: '',
+                  classNumber: '',
+                  teacherName: '',
+                  targetPerson: '',
+                  leader: ''
+                });
+              }}
+              className="btn btn-ghost btn-sm"
+            >
+              초기화
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="flex justify-center w-[100%] flex-1 overflow-hidden">
-        <ul className="list bg-base-100 rounded-box block w-[100%] overflow-y-auto">
+        <ul className="list bg-base-100 rounded-box block w-[100%] h-[60%] overflow-y-auto">
           {filteredAndSortedTodoPrayList?.map((todoPray) => (
             <li key={todoPray.id} className="border-b border-base-300 my-1 py-1 px-4">
               <div>
