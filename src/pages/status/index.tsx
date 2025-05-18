@@ -35,9 +35,11 @@ export default function StatusPage() {
 
   return (
     <div className="w-full flex flex-col items-center gap-5">
-      <h1>권유횟수: {stats.totalInvitations}</h1>
-      <h1>식사횟수: {stats.totalMeals}</h1>
-      <h1>확답횟수: {stats.totalConfirmed}</h1>
+      {stats.totalInvitations > 0 && (
+        <h1>권유횟수: {stats.totalInvitations}</h1>
+      )}
+      {stats.totalMeals > 0 && <h1>식사횟수: {stats.totalMeals}</h1>}
+      {stats.totalConfirmed > 0 && <h1>확답횟수: {stats.totalConfirmed}</h1>}
     </div>
   )
 }
