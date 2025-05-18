@@ -7,62 +7,82 @@ import { IoIosArrowUp } from "react-icons/io"
 export default function TodoPrays() {
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [filters, setFilters] = useState({
-    schoolCode: '',
-    classNumber: '',
-    targetPerson: '',
-    leader: '',
-    teacherName: ''
+    schoolCode: "",
+    classNumber: "",
+    targetPerson: "",
+    leader: "",
+    teacherName: "",
   })
 
   const { data: todoPrayList } = useCustomQuery<TodoPray[], Error>({
     key: "allTodoPrayList",
-    queryFn: () => todoPrayModel.getTodoPrayList()
+    queryFn: () => todoPrayModel.getTodoPrayList(),
   })
 
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = document.documentElement.scrollTop
-      const threshold = document.documentElement.scrollHeight * 0.25
-      setShowScrollTop(scrolled > threshold)
+      setShowScrollTop(scrolled > 0)
     }
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     })
   }
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }))
   }
 
   const filteredAndSortedTodoPrayList = useMemo(() => {
     if (!todoPrayList) return []
 
-    let filtered = todoPrayList.filter(todoPray => {
-      const matchSchoolCode = !filters.schoolCode || todoPray.schoolCode === filters.schoolCode
-      const matchClassNumber = !filters.classNumber || todoPray.classNumber?.toString().includes(filters.classNumber)
-      const matchTargetPerson = !filters.targetPerson || todoPray.targetPerson?.toLowerCase().includes(filters.targetPerson.toLowerCase())
-      const matchLeader = !filters.leader || todoPray.leader?.toLowerCase().includes(filters.leader.toLowerCase())
-      const matchTeacherName = !filters.teacherName || todoPray.teacherName?.toLowerCase().includes(filters.teacherName.toLowerCase())
+    let filtered = todoPrayList.filter((todoPray) => {
+      const matchSchoolCode =
+        !filters.schoolCode || todoPray.schoolCode === filters.schoolCode
+      const matchClassNumber =
+        !filters.classNumber ||
+        todoPray.classNumber?.toString().includes(filters.classNumber)
+      const matchTargetPerson =
+        !filters.targetPerson ||
+        todoPray.targetPerson
+          ?.toLowerCase()
+          .includes(filters.targetPerson.toLowerCase())
+      const matchLeader =
+        !filters.leader ||
+        todoPray.leader?.toLowerCase().includes(filters.leader.toLowerCase())
+      const matchTeacherName =
+        !filters.teacherName ||
+        todoPray.teacherName
+          ?.toLowerCase()
+          .includes(filters.teacherName.toLowerCase())
 
-      return matchSchoolCode && matchClassNumber && matchTargetPerson && matchLeader && matchTeacherName
+      return (
+        matchSchoolCode &&
+        matchClassNumber &&
+        matchTargetPerson &&
+        matchLeader &&
+        matchTeacherName
+      )
     })
 
     return filtered.sort((a, b) => {
-      const schoolCodeA = a.schoolCode || 'MIDDLE'
-      const schoolCodeB = b.schoolCode || 'MIDDLE'
+      const schoolCodeA = a.schoolCode || "MIDDLE"
+      const schoolCodeB = b.schoolCode || "MIDDLE"
       if (schoolCodeA !== schoolCodeB) {
-        return schoolCodeA === 'MIDDLE' ? -1 : 1
+        return schoolCodeA === "MIDDLE" ? -1 : 1
       }
 
       const classNumberA = Number(a.classNumber) || 0
@@ -71,13 +91,20 @@ export default function TodoPrays() {
         return classNumberA - classNumberB
       }
 
-      return (a.leader || '').localeCompare(b.leader || '')
+      return (a.leader || "").localeCompare(b.leader || "")
     })
   }, [todoPrayList, filters])
 
+  useEffect(() => {
+    console.log("showScrollTop: ", showScrollTop)
+  }, [showScrollTop])
+
   return (
     <div className="w-full flex flex-col items-center gap-5 h-screen overflow-hidden">
-      <MetaHead title="전체 기도부탁자 | The Note" content="전체 기도부탁자 목록" />
+      <MetaHead
+        title="전체 기도부탁자 | The Note"
+        content="전체 기도부탁자 목록"
+      />
 
       <div className="w-full flex flex-col items-center gap-3">
         <div className="text-2xl font-bold pt-4">전체 기도부탁자 목록</div>
@@ -117,7 +144,6 @@ export default function TodoPrays() {
 
         <div className="w-full max-w-4xl flex items-center px-4 justify-center">
           <div className="flex gap-2 mb-4 min-w-max">
-
             {/* <select
                   name="schoolCode"
                   value={filters.schoolCode}
@@ -150,12 +176,12 @@ export default function TodoPrays() {
             <button
               onClick={() => {
                 setFilters({
-                  schoolCode: '',
-                  classNumber: '',
-                  teacherName: '',
-                  targetPerson: '',
-                  leader: ''
-                });
+                  schoolCode: "",
+                  classNumber: "",
+                  teacherName: "",
+                  targetPerson: "",
+                  leader: "",
+                })
               }}
               className="btn btn-ghost btn-sm"
             >
@@ -166,22 +192,49 @@ export default function TodoPrays() {
       </div>
 
       <div className="flex justify-center w-[100%] flex-1 animate-fade-up">
-        <ul className="list bg-base-100 rounded-box block w-[100%] h-[60%] overflow-y-auto overflow-y-hidden">
+        <ul className="list bg-base-100 rounded-box block w-[100%] h-[60%]">
           {filteredAndSortedTodoPrayList?.map((todoPray) => (
-            <li key={todoPray.id} className="border-b border-base-300 my-1 py-1 px-4">
+            <li
+              key={todoPray.id}
+              className="border-b border-base-300 my-1 py-1 px-4"
+            >
               <div>
                 <div className="flex justify-between items-center">
-                  <div className="text-sm font-bold">{todoPray.targetPerson} <span className="text-sm opacity-50">{todoPray.relationship}</span></div>
-                  <div className="text-sm opacity-50">{todoPray.schoolCode === 'MIDDLE' ? '중등' : '고등'} {todoPray.classNumber}반 {todoPray.leader}</div>
+                  <div className="text-sm font-bold">
+                    {todoPray.targetPerson}{" "}
+                    <span className="text-sm opacity-50">
+                      {todoPray.relationship}
+                    </span>
+                  </div>
+                  <div className="text-sm opacity-50">
+                    {todoPray.schoolCode === "MIDDLE" ? "중등" : "고등"}{" "}
+                    {todoPray.classNumber}반 {todoPray.leader}
+                  </div>
                 </div>
                 <div className="mt-2">
                   <p className="list-col-wrap text-sm">{todoPray.content}</p>
                 </div>
                 <div className="mt-2 flex justify-end gap-1 text-xs opacity-60">
-                  {todoPray.firstHalfAttendance && <span className="badge badge-soft badge-sm font-bold">상반기 집회</span>}
-                  {todoPray.invitationCount > 0 && <span className="badge badge-soft badge-sm badge-info font-bold">권유</span>}
-                  {todoPray.mealCount > 0 && <span className="badge badge-soft badge-sm badge-success font-bold">식사</span>}
-                  {todoPray.isConfirmed && <span className="badge badge-soft badge-sm badge-primary font-bold">확답</span>}
+                  {todoPray.firstHalfAttendance && (
+                    <span className="badge badge-soft badge-sm font-bold">
+                      상반기 집회
+                    </span>
+                  )}
+                  {todoPray.invitationCount > 0 && (
+                    <span className="badge badge-soft badge-sm badge-info font-bold">
+                      권유
+                    </span>
+                  )}
+                  {todoPray.mealCount > 0 && (
+                    <span className="badge badge-soft badge-sm badge-success font-bold">
+                      식사
+                    </span>
+                  )}
+                  {todoPray.isConfirmed && (
+                    <span className="badge badge-soft badge-sm badge-primary font-bold">
+                      확답
+                    </span>
+                  )}
                 </div>
               </div>
             </li>
