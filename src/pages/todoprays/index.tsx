@@ -100,7 +100,7 @@ export default function TodoPrays() {
   }, [showScrollTop])
 
   return (
-    <div className="w-full flex flex-col items-center gap-5 h-screen overflow-hidden">
+    <div className="w-full flex flex-col items-center gap-5">
       <MetaHead
         title="전체 기도부탁자 | The Note"
         content="전체 기도부탁자 목록"
