@@ -245,7 +245,7 @@ export default function TodoPrays() {
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primary-focus transition-colors"
+          className="fixed bottom-6 right-6 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primary-focus transition-colors animate-fade-up"
         >
           <IoIosArrowUp size={24} />
         </button>
