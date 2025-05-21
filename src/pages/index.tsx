@@ -6,6 +6,7 @@ import { todoPrayModel } from "@/firebase/todopray"
 import { useCustomQuery } from "@/hooks/useCustomQuery"
 import { CiEdit, CiTrash } from "react-icons/ci";
 import { toast } from "react-toastify"
+import ConfettiExplosion from "react-confetti-explosion"
 
 const initialTodoPray: TodoPray = {
   leader: "",
@@ -26,6 +27,29 @@ export default function Home() {
   const [name, setName] = useState("")
   const [password, setPassword] = useState("")
   const [todoPray, setTodoPray] = useState<TodoPray>(initialTodoPray)
+
+  const [isExploding1, setIsExploding1] = useState(false)
+  const [isExploding2, setIsExploding2] = useState(false)
+  const [isExploding3, setIsExploding3] = useState(false)
+
+  const handleExplode = useCallback((num: number) => {
+    if (num === 1) {
+      setIsExploding1(true)
+    } else if (num === 2) {
+      setIsExploding2(true)
+    } else if (num === 3) {
+      setIsExploding3(true)
+    }
+    setTimeout(() => {
+      if (num === 1) {
+        setIsExploding1(false)
+      } else if (num === 2) {
+        setIsExploding2(false)
+      } else if (num === 3) {
+        setIsExploding3(false)
+      }
+    }, 5000)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -130,14 +154,16 @@ export default function Home() {
       await todoPrayModel.increaseInvitationCount(id)
       refetch()
     }
-  }, [])
+    handleExplode(1)
+  }, [handleExplode])
 
   const handleIncreaseMeal = useCallback((id?: string) => async () => {
     if (id) {
       await todoPrayModel.increaseMealCount(id)
       refetch()
     }
-  }, [])
+    handleExplode(2)
+  }, [handleExplode])
 
   const handleDecreaseInvitation = useCallback((id?: string) => async () => {
     if (id) {
@@ -153,12 +179,15 @@ export default function Home() {
     }
   }, [])
 
-  const handleToggleConfirmed = useCallback((id?: string) => async () => {
+  const handleToggleConfirmed = useCallback((id?: string, isConfirmed?: boolean) => async () => {
     if (id) {
       await todoPrayModel.toggleConfirmed(id)
       refetch()
     }
-  }, [])
+    if (!isConfirmed) {
+      handleExplode(3)
+    }
+  }, [handleExplode])
 
   return (
     <div className="w-full flex flex-col items-center gap-5">
@@ -219,9 +248,51 @@ export default function Home() {
                         {todoPray.isConfirmed && <span className="badge badge-soft badge-sm badge-primary font-bold">확답</span>}
                       </div>
                       <div className="flex justify-between gap-2">
-                        <button className="btn btn-outline btn-info" onClick={handleIncreaseInvitation(todoPray?.id)}>권유했어요</button>
-                        <button className="btn btn-outline btn-accent" onClick={handleIncreaseMeal(todoPray?.id)}>식사했어요</button>
-                        {todoPray.isConfirmed ? <button className="btn btn-outline btn-primary" onClick={handleToggleConfirmed(todoPray?.id)}>취소됐어요</button> : <button className="btn btn-outline btn-primary" onClick={handleToggleConfirmed(todoPray?.id)}>확답했어요</button>}
+                        <button className="btn btn-outline btn-info" onClick={handleIncreaseInvitation(todoPray?.id)}>
+                          {isExploding1 && (
+                            <div>
+                              <ConfettiExplosion {...{
+                                force: 0.6,
+                                duration: 5000,
+                                particleCount: 250,
+                                width: 1600,
+                                // floorHeight: 1600,
+                                // floorWidth: 1600
+                              }} />
+                            </div>
+                          )}
+                          권유했어요
+                        </button>
+                        <button className="btn btn-outline btn-accent" onClick={handleIncreaseMeal(todoPray?.id)}>
+                          {isExploding2 && (
+                            <div>
+                              <ConfettiExplosion {...{
+                                force: 0.6,
+                                duration: 5000,
+                                particleCount: 250,
+                                width: 1600,
+                                // floorHeight: 1600,
+                                // floorWidth: 1600
+                              }} />
+                            </div>
+                          )}
+                          식사했어요
+                        </button>
+                        {todoPray.isConfirmed ? <button className="btn btn-outline btn-primary" onClick={handleToggleConfirmed(todoPray?.id, todoPray?.isConfirmed)}>취소됐어요</button> : <button className="btn btn-outline btn-primary" onClick={handleToggleConfirmed(todoPray?.id, todoPray?.isConfirmed)}>
+                          {isExploding3 && (
+                            <div>
+                              <ConfettiExplosion {...{
+                                force: 0.6,
+                                duration: 2000,
+                                particleCount: 250,
+                                width: 1600,
+                                // floorHeight: 1600,
+                                // floorWidth: 1600
+                              }} />
+                            </div>
+                          )}
+                          확답했어요
+                        </button>}
                       </div>
                     </div>
                   </li>
