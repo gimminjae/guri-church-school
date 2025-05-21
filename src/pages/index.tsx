@@ -42,7 +42,7 @@ export default function Home() {
   }
 
   const { data: todoPrayList, refetch } = useCustomQuery<TodoPray[], Error>({
-    key: "todoPrayList",
+    key: user?.uid || "",
     queryFn: () => todoPrayModel.getTodoPrayListByUserId(user?.uid || "")
   })
 
