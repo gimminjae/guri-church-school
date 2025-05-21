@@ -179,12 +179,12 @@ export default function Home() {
     }
   }, [])
 
-  const handleToggleConfirmed = useCallback((id?: string, isConfirmed?: boolean) => async () => {
+  const handleToggleConfirmed = useCallback((id?: string, isConfirmed?: string) => async () => {
     if (id) {
       await todoPrayModel.toggleConfirmed(id)
       refetch()
     }
-    if (!isConfirmed) {
+    if (isConfirmed === "confirm") {
       handleExplode(3)
     }
   }, [handleExplode])
@@ -278,12 +278,12 @@ export default function Home() {
                           )}
                           식사했어요
                         </button>
-                        {todoPray.isConfirmed ? <button className="btn btn-outline btn-primary" onClick={handleToggleConfirmed(todoPray?.id, todoPray?.isConfirmed)}>취소됐어요</button> : <button className="btn btn-outline btn-primary" onClick={handleToggleConfirmed(todoPray?.id, todoPray?.isConfirmed)}>
+                        <div className="whitespace-nowrap">
                           {isExploding3 && (
                             <div>
                               <ConfettiExplosion {...{
                                 force: 0.6,
-                                duration: 2000,
+                                duration: 5000,
                                 particleCount: 250,
                                 width: 1600,
                                 // floorHeight: 1600,
@@ -291,8 +291,10 @@ export default function Home() {
                               }} />
                             </div>
                           )}
-                          확답했어요
-                        </button>}
+                          {todoPray.isConfirmed ? <button className="btn btn-outline btn-primary" onClick={handleToggleConfirmed(todoPray?.id)}>취소됐어요</button> : <button className="btn btn-outline btn-primary" onClick={handleToggleConfirmed(todoPray?.id, "confirm")}>
+                            확답했어요
+                          </button>}
+                        </div>
                       </div>
                     </div>
                   </li>
